@@ -1,0 +1,24 @@
+machine:
+  java:
+    version: oraclejdk8
+  timezone: Asia/Tokyo
+  environment:
+    GRADLE_OPTS: -Xmx4G
+  post:
+    - sudo service mysql stop
+    - sudo service postgresql stop
+
+checkout:
+  post:
+    - chmod +x ./gradlew
+
+dependencies:
+  override:
+    - ./gradlew testClasses --stacktrace
+
+test:
+  override:
+    - ./gradlew --full-stacktrace check
+  post:
+    - mkdir -p $CIRCLE_TEST_REPORTS/junit/
+    - find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
